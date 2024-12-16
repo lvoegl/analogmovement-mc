@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Unlock the power of your analog keyboard in Minecraft.",
+  "authors": [
+    "verotek"
+  ],
+  "contact": {
+    "issues": "https://github.com/lvoegl/analogmovement-mc/issues",
+    "sources": "https://github.com/lvoegl/analogmovement-mc"
+  },
+  "license": "GPL-2.0-or-later",
+  "icon": "analog_movement-128x.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.verotek.analog_movement.AnalogMovement"
+    ]
+  },
+  "mixins": [
+    "analog_movement.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "${mcdep}",
+    "fabric-api": "*",
+    "libanalog": "*"
+  }
+}
