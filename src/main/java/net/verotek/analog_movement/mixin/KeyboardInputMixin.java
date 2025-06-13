@@ -64,8 +64,8 @@ public abstract class KeyboardInputMixin extends Input {
     *///?} else {
     pressingForward = forwardMovement > 0.0f;
     pressingBack = forwardMovement < 0.0f;
-    pressingLeft = sidewaysMovement > 0.0f;;
-    pressingRight = sidewaysMovement < 0.0f;;
+    pressingLeft = sidewaysMovement > 0.0f;
+    pressingRight = sidewaysMovement < 0.0f;
 
     jumping = settings.jumpKey.isPressed();
     sneaking = settings.sneakKey.isPressed();
