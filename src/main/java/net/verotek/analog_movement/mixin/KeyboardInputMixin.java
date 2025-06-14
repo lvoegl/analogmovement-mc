@@ -7,6 +7,7 @@ import net.minecraft.client.option.KeyBinding;
 //? if >=1.21.3 {
 /*import net.minecraft.util.PlayerInput;
 *///?}
+import net.minecraft.util.math.Vec2f;
 import net.verotek.libanalog.interfaces.mixin.IAnalogKeybinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -78,8 +79,12 @@ public abstract class KeyboardInputMixin extends Input {
     }
     //?}
 
+    //? if >=1.21.5 {
+    /*this.movementVector = new Vec2f(sidewaysMovement, forwardMovement);
+    *///?} else {
     movementForward = forwardMovement;
     movementSideways = sidewaysMovement;
+    //?}
     ci.cancel();
   }
 }
