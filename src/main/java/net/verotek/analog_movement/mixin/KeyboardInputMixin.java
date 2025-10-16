@@ -1,7 +1,10 @@
 package net.verotek.analog_movement.mixin;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 //? if >=1.21.3 {
@@ -51,6 +54,34 @@ public abstract class KeyboardInputMixin extends Input {
   *///?} else {
   private void tick(boolean slowDown, float slowDownFactor, CallbackInfo ci) {
   //?}
+    Screen screen = MinecraftClient.getInstance().currentScreen;
+    ClientPlayerEntity player = MinecraftClient.getInstance().player;
+    if (screen != null || player == null) {
+      // reset all movement
+
+      //? if >=1.21.3 {
+      playerInput =
+          new PlayerInput(false, false, false, false, false, false, false);
+      //?} else {
+      /*pressingForward = false;
+      pressingBack = false;
+      pressingLeft = false;
+      pressingRight = false;
+      jumping = false;
+      sneaking = false;
+      *///?}
+
+      //? if >=1.21.5 {
+      this.movementVector = new Vec2f(0.0f, 0.0f);
+      //?} else {
+      /*movementForward = 0.0f;
+      movementSideways = 0.0f;
+      *///?}
+
+      ci.cancel();
+      return;
+    }
+
     float forwardMovement = computeForwardMovement(settings.forwardKey, settings.backKey);
     float sidewaysMovement = computeSidewaysMovement(settings.leftKey, settings.rightKey);
 
