@@ -7,7 +7,9 @@ import net.minecraft.client.option.KeyBinding;
 //? if >=1.21.3 {
 /*import net.minecraft.util.PlayerInput;
 *///?}
-import net.minecraft.util.math.Vec2f;
+//? if >=1.21.5 {
+/*import net.minecraft.util.math.Vec2f;
+*///?}
 import net.verotek.libanalog.interfaces.mixin.IAnalogKeybinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
