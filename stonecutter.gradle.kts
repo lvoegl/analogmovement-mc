@@ -1,6 +1,6 @@
 plugins {
     id("dev.kikugie.stonecutter")
-    id("fabric-loom") version "1.10-SNAPSHOT" apply false
+    id("fabric-loom") version "1.11-SNAPSHOT" apply false
     id("me.modmuss50.mod-publish-plugin") version "0.8.1" apply false
     id("com.github.johnrengelman.shadow") version "7.0.0" apply false
 }
