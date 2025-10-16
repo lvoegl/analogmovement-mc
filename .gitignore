@@ -1,3 +1,5 @@
+versions/**/logs
+
 # gradle
 
 .gradle/
