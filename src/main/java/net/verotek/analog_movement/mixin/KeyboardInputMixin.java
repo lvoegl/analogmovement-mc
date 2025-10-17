@@ -8,11 +8,11 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 //? if >=1.21.3 {
-/*import net.minecraft.util.PlayerInput;
-*///?}
+import net.minecraft.util.PlayerInput;
+//?}
 //? if >=1.21.5 {
-/*import net.minecraft.util.math.Vec2f;
-*///?}
+import net.minecraft.util.math.Vec2f;
+//?}
 import net.verotek.libanalog.interfaces.mixin.IAnalogKeybinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,10 +50,10 @@ public abstract class KeyboardInputMixin extends Input {
 
   @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
   //? if >=1.21.4 {
-  /*private void tick(CallbackInfo ci) {
-  *///?} else {
-  private void tick(boolean slowDown, float slowDownFactor, CallbackInfo ci) {
-  //?}
+  private void tick(CallbackInfo ci) {
+  //?} else {
+  /*private void tick(boolean slowDown, float slowDownFactor, CallbackInfo ci) {
+  *///?}
     Screen screen = MinecraftClient.getInstance().currentScreen;
     ClientPlayerEntity player = MinecraftClient.getInstance().player;
     if (screen != null || player == null) {
@@ -86,7 +86,7 @@ public abstract class KeyboardInputMixin extends Input {
     float sidewaysMovement = computeSidewaysMovement(settings.leftKey, settings.rightKey);
 
     //? if >=1.21.3 {
-    /*playerInput =
+    playerInput =
         new PlayerInput(
             forwardMovement > 0.0f,
             forwardMovement < 0.0f,
@@ -95,29 +95,29 @@ public abstract class KeyboardInputMixin extends Input {
             settings.jumpKey.isPressed(),
             settings.sneakKey.isPressed(),
             settings.sprintKey.isPressed());
-    *///?} else {
-    pressingForward = forwardMovement > 0.0f;
+    //?} else {
+    /*pressingForward = forwardMovement > 0.0f;
     pressingBack = forwardMovement < 0.0f;
     pressingLeft = sidewaysMovement > 0.0f;
     pressingRight = sidewaysMovement < 0.0f;
 
     jumping = settings.jumpKey.isPressed();
     sneaking = settings.sneakKey.isPressed();
-    //?}
+    *///?}
 
     //? if <1.21.4 {
-    if (slowDown) {
+    /*if (slowDown) {
       forwardMovement *= slowDownFactor;
       sidewaysMovement *= slowDownFactor;
     }
-    //?}
+    *///?}
 
     //? if >=1.21.5 {
-    /*this.movementVector = new Vec2f(sidewaysMovement, forwardMovement);
-    *///?} else {
-    movementForward = forwardMovement;
+    this.movementVector = new Vec2f(sidewaysMovement, forwardMovement);
+    //?} else {
+    /*movementForward = forwardMovement;
     movementSideways = sidewaysMovement;
-    //?}
+    *///?}
     ci.cancel();
   }
 }
