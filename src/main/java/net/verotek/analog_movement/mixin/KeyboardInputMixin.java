@@ -24,7 +24,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(KeyboardInput.class)
 public abstract class KeyboardInputMixin extends Input {
-  @Shadow @Final private GameOptions settings;
+  @Shadow
+  @Final
+  private GameOptions settings;
 
   @Unique
   private float computeSidewaysMovement(KeyBinding positive, KeyBinding negative) {
@@ -60,8 +62,7 @@ public abstract class KeyboardInputMixin extends Input {
       // reset all movement
 
       //? if >=1.21.3 {
-      playerInput =
-          new PlayerInput(false, false, false, false, false, false, false);
+      playerInput = new PlayerInput(false, false, false, false, false, false, false);
       //?} else {
       /*pressingForward = false;
       pressingBack = false;
@@ -86,15 +87,14 @@ public abstract class KeyboardInputMixin extends Input {
     float sidewaysMovement = computeSidewaysMovement(settings.leftKey, settings.rightKey);
 
     //? if >=1.21.3 {
-    playerInput =
-        new PlayerInput(
-            forwardMovement > 0.0f,
-            forwardMovement < 0.0f,
-            sidewaysMovement > 0.0f,
-            sidewaysMovement < 0.0f,
-            settings.jumpKey.isPressed(),
-            settings.sneakKey.isPressed(),
-            settings.sprintKey.isPressed());
+    playerInput = new PlayerInput(
+        forwardMovement > 0.0f,
+        forwardMovement < 0.0f,
+        sidewaysMovement > 0.0f,
+        sidewaysMovement < 0.0f,
+        settings.jumpKey.isPressed(),
+        settings.sneakKey.isPressed(),
+        settings.sprintKey.isPressed());
     //?} else {
     /*pressingForward = forwardMovement > 0.0f;
     pressingBack = forwardMovement < 0.0f;
