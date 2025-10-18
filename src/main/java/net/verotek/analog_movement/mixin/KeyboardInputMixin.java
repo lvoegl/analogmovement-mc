@@ -16,11 +16,9 @@ import net.minecraft.util.math.Vec2f;
 import net.verotek.libanalog.interfaces.mixin.IAnalogKeybinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(KeyboardInput.class)
 public abstract class KeyboardInputMixin extends Input {
@@ -50,12 +48,12 @@ public abstract class KeyboardInputMixin extends Input {
     return analogPositive.pressedAmount() - analogNegative.pressedAmount();
   }
 
-  @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-  //? if >=1.21.4 {
-  private void tick(CallbackInfo ci) {
-  //?} else {
-  /*private void tick(boolean slowDown, float slowDownFactor, CallbackInfo ci) {
-  *///?}
+  /**
+   * @author lvoegl
+   * @reason Computes player movement based on analog inputs.
+   */
+  @Overwrite
+  public void tick(/*? if <1.21.4 {*/ /*boolean slowDown, float slowDownFactor *//*?}*/) {
     Screen screen = MinecraftClient.getInstance().currentScreen;
     ClientPlayerEntity player = MinecraftClient.getInstance().player;
     if (screen != null || player == null) {
@@ -78,8 +76,6 @@ public abstract class KeyboardInputMixin extends Input {
       /*movementForward = 0.0f;
       movementSideways = 0.0f;
       *///?}
-
-      ci.cancel();
       return;
     }
 
@@ -118,6 +114,5 @@ public abstract class KeyboardInputMixin extends Input {
     /*movementForward = forwardMovement;
     movementSideways = sidewaysMovement;
     *///?}
-    ci.cancel();
   }
 }
