@@ -84,19 +84,18 @@ public abstract class KeyboardInputMixin extends Input {
 
     //? if >=1.21.3 {
     playerInput = new PlayerInput(
-        forwardMovement > 0.0f,
-        forwardMovement < 0.0f,
-        sidewaysMovement > 0.0f,
-        sidewaysMovement < 0.0f,
+        settings.forwardKey.isPressed(),
+        settings.backKey.isPressed(),
+        settings.leftKey.isPressed(),
+        settings.rightKey.isPressed(),
         settings.jumpKey.isPressed(),
         settings.sneakKey.isPressed(),
         settings.sprintKey.isPressed());
     //?} else {
-    /*pressingForward = forwardMovement > 0.0f;
-    pressingBack = forwardMovement < 0.0f;
-    pressingLeft = sidewaysMovement > 0.0f;
-    pressingRight = sidewaysMovement < 0.0f;
-
+    /*pressingForward = settings.forwardKey.isPressed();
+    pressingBack = settings.backKey.isPressed();
+    pressingLeft = settings.leftKey.isPressed();
+    pressingRight = settings.rightKey.isPressed();
     jumping = settings.jumpKey.isPressed();
     sneaking = settings.sneakKey.isPressed();
     *///?}
