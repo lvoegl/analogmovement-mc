@@ -22,7 +22,7 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: build
-        run: ./gradlew build
+        run: ./gradlew buildAndCollect
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: capture build artifacts
