@@ -24,7 +24,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.0",
-    "minecraft": "${mcdep}",
+    "minecraft": "${minecraft}",
     "fabric-api": "*",
     "libanalog": "*"
   }

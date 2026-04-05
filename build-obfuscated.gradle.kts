@@ -1,28 +1,15 @@
 plugins {
-    id("maven-publish")
-    id("fabric-loom")
+    id("dev.architectury.loom") version "1.13-SNAPSHOT"
     id("me.modmuss50.mod-publish-plugin")
+    `maven-publish`
 }
 
-class ModData {
-    val id = property("mod.id").toString()
-    val name = property("mod.name").toString()
-    val version = property("mod.version").toString()
-    val group = property("mod.group").toString()
-}
+val minecraft = stonecutter.current.version
+val loader = loom.platform.get().name.lowercase()
 
-class ModDependencies {
-    operator fun get(name: String) = property("deps.$name").toString()
-}
-
-val mod = ModData()
-val deps = ModDependencies()
-val mcVersion = stonecutter.current.version
-val mcDep = property("mod.mc_dep").toString()
-
-version = "${mod.version}+$mcVersion"
+version = "${mod.version}+$minecraft"
 group = mod.group
-base { archivesName.set(mod.id) }
+base { archivesName.set("${mod.id}-$loader") }
 
 repositories {
     fun strictMaven(url: String, alias: String, vararg groups: String) = exclusiveContent {
@@ -34,18 +21,19 @@ repositories {
 }
 
 dependencies {
-    fun fapi(vararg modules: String) = modules.forEach {
-        modImplementation(fabricApi.module(it, deps["fabric_api"]))
+    minecraft("com.mojang:minecraft:$minecraft")
+    modImplementation("curse.maven:libanalog-1159992:${mod.dep("libanalog")}")
+    if (loader == "fabric") {
+        modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api")}")
     }
 
-    minecraft("com.mojang:minecraft:$mcVersion")
-    mappings("net.fabricmc:yarn:$mcVersion+build.${deps["yarn_build"]}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${deps["fabric_loader"]}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${deps["fabric_api"]}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${deps["fabric_api"]}")
-    modImplementation("curse.maven:libanalog-1159992:${deps["libanalog"]}")
+    mappings (loom.officialMojangMappings())
+}
 
-    fapi("fabric-lifecycle-events-v1")
+tasks.remapJar {
+    dependsOn(tasks.jar)
+    inputFile.set(tasks.jar.get().archiveFile)
 }
 
 loom {
@@ -54,35 +42,23 @@ loom {
             options.put("mark-corresponding-synthetics", "1")
         }
     }
-
-    runConfigs.all {
-        ideConfigGenerated(true)
-        vmArgs("-Dmixin.debug.export=true")
-        runDir = "../../run"
-    }
 }
 
 java {
     withSourcesJar()
-    val java = if (stonecutter.eval(mcVersion, ">=1.20.6")) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
+    val java = if (stonecutter.eval(minecraft, ">=1.20.5")) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
     targetCompatibility = java
     sourceCompatibility = java
 }
 
 tasks.processResources {
-    inputs.property("id", mod.id)
-    inputs.property("name", mod.name)
-    inputs.property("version", mod.version)
-    inputs.property("mcdep", mcDep)
-
-    val map = mapOf(
+    properties(
+        listOf("fabric.mod.json"),
         "id" to mod.id,
         "name" to mod.name,
         "version" to mod.version,
-        "mcdep" to mcDep
+        "minecraft" to mod.prop("mc_dep_fabric")
     )
-
-    filesMatching("fabric.mod.json") { expand(map) }
 }
 
 tasks.register<Copy>("buildAndCollect") {
@@ -92,14 +68,9 @@ tasks.register<Copy>("buildAndCollect") {
     dependsOn("build")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 publishMods {
     file = tasks.remapJar.get().archiveFile
-    additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
-    displayName = "${mod.name} ${mod.version} for $mcVersion"
+    displayName = "${mod.name} ${mod.version} for $minecraft"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = STABLE
@@ -111,18 +82,20 @@ publishMods {
     modrinth {
         projectId = property("publish.modrinth").toString()
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add(mcVersion)
-        requires {
-            slug = "fabric-api"
+        minecraftVersions.add(minecraft)
+        requires("libanalog")
+        if (loader == "fabric") {
+            requires("fabric-api")
         }
     }
 
     curseforge {
         projectId = property("publish.curseforge").toString()
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        minecraftVersions.add(mcVersion)
-        requires {
-            slug = "fabric-api"
+        minecraftVersions.add(minecraft)
+        requires("libanalog")
+        if (loader == "fabric") {
+            requires("fabric-api")
         }
     }
 }
@@ -142,7 +115,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             groupId = "${property("mod.group")}.${mod.id}"
             artifactId = mod.version
-            version = mcVersion
+            version = "${project.version}-$loader"
 
             from(components["java"])
         }

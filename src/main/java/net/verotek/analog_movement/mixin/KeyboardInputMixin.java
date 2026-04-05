@@ -1,18 +1,19 @@
 package net.verotek.analog_movement.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.Input;
-import net.minecraft.client.input.KeyboardInput;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
-//? if >=1.21.3 {
-import net.minecraft.util.PlayerInput;
-//?}
+//? if <1.21.3 {
+import net.minecraft.client.player.Input;
+//? } else {
+/*import net.minecraft.client.player.ClientInput;
+import net.minecraft.world.entity.player.Input;
+*///? }
 //? if >=1.21.5 {
-import net.minecraft.util.math.Vec2f;
-//?}
+/*import net.minecraft.world.phys.Vec2;
+*///? }
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.verotek.libanalog.interfaces.mixin.IAnalogKeybinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,14 +21,12 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(KeyboardInput.class)
-public abstract class KeyboardInputMixin extends Input {
-  @Shadow
-  @Final
-  private GameOptions settings;
+@Mixin(targets = "net.minecraft.client.input.KeyboardInput")
+public abstract class KeyboardInputMixin extends /*? if >=1.21.3 {*/ /*ClientInput *//*?} else {*/ Input /*?}*/ {
+  @Shadow @Final private Options options;
 
   @Unique
-  private float computeSidewaysMovement(KeyBinding positive, KeyBinding negative) {
+  private float computeSidewaysMovement(KeyMapping positive, KeyMapping negative) {
     IAnalogKeybinding analogPositive = (IAnalogKeybinding) positive;
     IAnalogKeybinding analogNegative = (IAnalogKeybinding) negative;
 
@@ -35,12 +34,12 @@ public abstract class KeyboardInputMixin extends Input {
   }
 
   @Unique
-  private float computeForwardMovement(KeyBinding positive, KeyBinding negative) {
+  private float computeForwardMovement(KeyMapping positive, KeyMapping negative) {
     IAnalogKeybinding analogPositive = (IAnalogKeybinding) positive;
     IAnalogKeybinding analogNegative = (IAnalogKeybinding) negative;
 
-    if (settings.sprintKey.isPressed()
-        && positive.isPressed()
+    if (options.keySprint.isDown()
+        && positive.isDown()
         && analogPositive.pressedAmount() > analogNegative.pressedAmount()) {
       return 1.0f;
     }
@@ -53,65 +52,65 @@ public abstract class KeyboardInputMixin extends Input {
    * @reason Computes player movement based on analog inputs.
    */
   @Overwrite
-  public void tick(/*? if <1.21.4 {*/ /*boolean slowDown, float slowDownFactor *//*?}*/) {
-    Screen screen = MinecraftClient.getInstance().currentScreen;
-    ClientPlayerEntity player = MinecraftClient.getInstance().player;
+  public void tick(/*? if <1.21.4 {*/ boolean slowDown, float slowDownFactor /*?}*/) {
+    Screen screen = Minecraft.getInstance().screen;
+    LocalPlayer player = Minecraft.getInstance().player;
     if (screen != null || player == null) {
       // reset all movement
 
       //? if >=1.21.3 {
-      playerInput = new PlayerInput(false, false, false, false, false, false, false);
-      //?} else {
-      /*pressingForward = false;
-      pressingBack = false;
-      pressingLeft = false;
-      pressingRight = false;
+      /*keyPresses = new Input(false, false, false, false, false, false, false);
+      *///?} else {
+      up = false;
+      down = false;
+      left = false;
+      right = false;
       jumping = false;
-      sneaking = false;
-      *///?}
+      shiftKeyDown = false;
+      //?}
 
       //? if >=1.21.5 {
-      this.movementVector = new Vec2f(0.0f, 0.0f);
-      //?} else {
-      /*movementForward = 0.0f;
-      movementSideways = 0.0f;
-      *///?}
+      /*moveVector = new Vec2(0.0f, 0.0f);
+      *///?} else {
+      forwardImpulse = 0.0f;
+      leftImpulse = 0.0f;
+      //?}
       return;
     }
 
-    float forwardMovement = computeForwardMovement(settings.forwardKey, settings.backKey);
-    float sidewaysMovement = computeSidewaysMovement(settings.leftKey, settings.rightKey);
+    float forwardMovement = computeForwardMovement(options.keyUp, options.keyDown);
+    float sidewaysMovement = computeSidewaysMovement(options.keyLeft, options.keyRight);
 
     //? if >=1.21.3 {
-    playerInput = new PlayerInput(
-        settings.forwardKey.isPressed(),
-        settings.backKey.isPressed(),
-        settings.leftKey.isPressed(),
-        settings.rightKey.isPressed(),
-        settings.jumpKey.isPressed(),
-        settings.sneakKey.isPressed(),
-        settings.sprintKey.isPressed());
-    //?} else {
-    /*pressingForward = settings.forwardKey.isPressed();
-    pressingBack = settings.backKey.isPressed();
-    pressingLeft = settings.leftKey.isPressed();
-    pressingRight = settings.rightKey.isPressed();
-    jumping = settings.jumpKey.isPressed();
-    sneaking = settings.sneakKey.isPressed();
-    *///?}
+    /*keyPresses = new Input(
+        options.keyUp.isDown(),
+        options.keyDown.isDown(),
+        options.keyLeft.isDown(),
+        options.keyRight.isDown(),
+        options.keyJump.isDown(),
+        options.keyShift.isDown(),
+        options.keySprint.isDown());
+    *///?} else {
+    up = options.keyUp.isDown();
+    down = options.keyDown.isDown();
+    left = options.keyLeft.isDown();
+    right = options.keyRight.isDown();
+    jumping = options.keyJump.isDown();
+    shiftKeyDown = options.keyShift.isDown();
+    //?}
 
     //? if <1.21.4 {
-    /*if (slowDown) {
+    if (slowDown) {
       forwardMovement *= slowDownFactor;
       sidewaysMovement *= slowDownFactor;
     }
-    *///?}
+    //?}
 
     //? if >=1.21.5 {
-    this.movementVector = new Vec2f(sidewaysMovement, forwardMovement);
-    //?} else {
-    /*movementForward = forwardMovement;
-    movementSideways = sidewaysMovement;
-    *///?}
+    /*moveVector = new Vec2(sidewaysMovement, forwardMovement);
+    *///?} else {
+    forwardImpulse = forwardMovement;
+    leftImpulse = sidewaysMovement;
+    //?}
   }
 }
