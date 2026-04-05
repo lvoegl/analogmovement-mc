@@ -2,7 +2,7 @@ plugins {
     id("dev.kikugie.stonecutter")
     id("me.modmuss50.mod-publish-plugin") version "1.1.0" apply false
 }
-stonecutter active "1.21.1-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "26.1-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter parameters {
     swaps["mod_version"] = "\"" + property("mod.version") + "\";"
