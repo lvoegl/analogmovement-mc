@@ -30,7 +30,7 @@ dependencies {
 }
 
 tasks.jar {
-    archiveClassifier = "slim"
+    archiveClassifier = ""
 }
 
 loom {
