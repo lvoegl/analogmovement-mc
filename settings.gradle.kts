@@ -27,7 +27,7 @@ stonecutter {
                 version("$version-$loader", version).buildscript(buildscript)
             }
         }
-        mc("fabric", "1.20.1", "1.20.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.9", "26.1")
+        mc("fabric", "1.20.1", "1.20.4", "1.20.6", "1.21.1", "1.21.3", "1.21.4", "1.21.5", "1.21.9", "1.21.11", "26.1")
     }
     create(rootProject)
 }
